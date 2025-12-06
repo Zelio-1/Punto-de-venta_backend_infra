@@ -26,7 +26,7 @@ CREATE TABLE Ventas (
     ticket_number VARCHAR(50) NOT NULL,
     sale_datetime TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     sale_state VARCHAR(50) NOT NULL,
-    products TEXT NOT NULL
+    products TEXT NOT NULL,
     CONSTRAINT ticket_id_unique UNIQUE (ticket_id),
     CONSTRAINT fk_venta_usuario FOREIGN KEY (id_user) REFERENCES usuarios(id_user)
 );
