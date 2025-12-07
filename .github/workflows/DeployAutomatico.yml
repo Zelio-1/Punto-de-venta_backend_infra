@@ -25,12 +25,12 @@ jobs:
       # Crear la imagen de Docker
       - name: Crear la imagen de Docker
         run: |
-          docker build -t ghcr.io/${{ github.repository }}/pos-app:latest .
+          docker build -t ghcr.io/zelio-1/punto-de-venta-backend/pos-app:latest .
 
       # Hacer un push de la imagen de Docker a GitHub Container Registry
       - name: Push de la imagen de Docker a GitHub Container Registry
         run: |
-          docker push ghcr.io/${{ github.repository }}/pos-app:latest
+          docker push ghcr.io/zelio-1/punto-de-venta-backend/pos-app:latest
 
       # Actualizar el repositorio en Render 
       - name: Despliegue a Render
