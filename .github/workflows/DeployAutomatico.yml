@@ -1,0 +1,55 @@
+name: POS (backend) deploy
+
+on:
+  push:
+    branches:
+      - main   # Rama que ejecuta el despliegue
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Clona el repositorio
+    - name: Analizando el repositorio
+      uses: actions/checkout@v3
+
+    # Login a Azure 
+    - name: Login a Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    # Crear y subir la imagen Docker a ACR
+    - name: Crear y pushear la imagen de Docker 
+      run: |
+        az acr build \
+          --registry ${{ secrets.ACR_NAME }} \
+          --image mi-app-flask:latest .
+
+    # Desplegar la imagen en Azure Web App
+    - name: Web_App_despliegue
+      run: |
+        az webapp config container set \
+          --name ${{ secrets.WEBAPP_NAME }} \
+          --resource-group ${{ secrets.RESOURCE_GROUP }} \
+          --docker-custom-image-name ${{ secrets.ACR_NAME }}.azurecr.io/mi-app-flask:latest \
+          --docker-registry-server-url https://${{ secrets.ACR_NAME }}.azurecr.io \
+          --docker-registry-server-user ${{ secrets.ACR_USERNAME }} \
+          --docker-registry-server-password ${{ secrets.ACR_PASSWORD }}
+
+    # Variables de entorno para la app
+    - name: Set environment variables
+      run: |
+        az webapp config appsettings set \
+          --name ${{ secrets.WEBAPP_NAME }} \
+          --resource-group ${{ secrets.RESOURCE_GROUP }} \
+          --settings \
+            PORT=8080 \
+            WEBSITES_PORT=8080 \
+            JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} \
+            DB_HOST=${{ secrets.DB_HOST }} \
+            DB_USER=${{ secrets.DB_USER }} \
+            DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+            DB_NAME=${{ secrets.DB_NAME }} \
+            DB_PORT=${{ secrets.DB_PORT }}
