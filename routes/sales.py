@@ -81,7 +81,7 @@ def create_sale():
         cursor.close()
 
 #Defining a endpoint to list the sales of an employee (GET method)
-@sales_bp.route('/salesModi', methods = ['GET'])
+@sales_bp.route('/sales', methods = ['GET'])
 @jwt_required()
 def get_all_sales(): 
 
